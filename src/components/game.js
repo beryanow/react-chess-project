@@ -2,12 +2,13 @@ import React from 'react';
 
 import '../index.css';
 import Board from './board.js';
+import initializeBoard from "./board_structure_creator";
 
 export default class Game extends React.Component {
     constructor() {
         super(undefined);
         this.state = {
-            squares: Array(64).fill(1)
+            squares: initializeBoard()
         }
     }
 
