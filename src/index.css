@@ -1,0 +1,23 @@
+.square {
+    border: transparent;
+    float: left;
+    line-height: 34px;
+    height: 86px;
+    width: 86px;
+    padding: 0;
+    text-align: center;
+}
+
+.game {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.dark-square {
+    background-color: #6F73D2;
+}
+
+.light-square {
+    background-color: #9DACFF;
+}
