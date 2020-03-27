@@ -1,0 +1,6 @@
+projectKey=ru.nsu.g.beryanov:chess
+serverUrl=http://84.237.50.237:9000
+serverVersion=7.7.0.23042
+dashboardUrl=http://84.237.50.237:9000/dashboard?id=ru.nsu.g.beryanov%3Achess
+ceTaskId=AXEbTFPoqeLATShcfI0J
+ceTaskUrl=http://84.237.50.237:9000/api/ce/task?id=AXEbTFPoqeLATShcfI0J
