@@ -16,8 +16,8 @@ export default class King extends Piece {
             (previous + 1 === forward));
     }
 
-    getStepwisePath(forward) {
-        return [forward];
+    getStepwisePath() {
+        return [];
     }
 
 }

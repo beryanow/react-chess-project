@@ -29,7 +29,7 @@ export default class Bishop extends Piece {
             start += 7;
         }
 
-        for (let i = start; i <= end; i += increment) {
+        for (let i = start; i < end; i += increment) {
             stepwisePath.push(i);
         }
 

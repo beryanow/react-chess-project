@@ -26,9 +26,11 @@ export default class Queen extends Piece {
             increment = 8;
             start += 8;
         } else if (Math.abs(previous - forward) % 9 === 0) {
+            // left diagonal
             increment = 9;
             start += 9;
         } else if (Math.abs(previous - forward) % 7 === 0) {
+            // right diagonal
             increment = 7;
             start += 7;
         } else {
@@ -36,7 +38,7 @@ export default class Queen extends Piece {
             start += 1;
         }
 
-        for (let i = start; i <= end; i += increment) {
+        for (let i = start; i < end; i += increment) {
             stepwisePath.push(i);
         }
 

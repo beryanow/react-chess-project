@@ -14,6 +14,21 @@ export default class Game extends React.Component {
         }
     }
 
+    isMoveLegal(srcToDestPath, forward) {
+        let isLegal = true;
+        for (let i = 0; i < srcToDestPath.length; i++) {
+            if (this.state.squares[srcToDestPath[i]] !== null) {
+                isLegal = false;
+            }
+        }
+
+        if (this.state.squares[forward] !== null && this.state.squares[forward].player === this.state.player) {
+            isLegal = false;
+        }
+
+        return isLegal;
+    }
+
     handleClick(i) {
         if (this.state.sourceSelection === -1) {
             if (this.state.squares[i] && (this.state.squares[i].player === this.state.player)) {
@@ -26,24 +41,31 @@ export default class Game extends React.Component {
             const squares = this.state.squares.slice();
             const previous = this.state.sourceSelection;
 
-            if (parseInt(previous / 8) % 2 === 0) {
-                if (previous % 2 === 0) {
-                    squares[previous].style = {...this.state.squares[previous].style, backgroundColor: "#9CAAF8"};
-                } else {
-                    squares[previous].style = {...this.state.squares[previous].style, backgroundColor: "#6F73D2"};
-                }
+            squares[previous].style = {...this.state.squares[previous].style, backgroundColor: null};
+
+            this.setState({squares: squares});
+
+            const beat = !!squares[i];
+            const isMovePossible = squares[previous].isMovePossible(previous, i, beat);
+            const stepwisePath = squares[previous].getStepwisePath(previous, i);
+            const isMoveLegal = this.isMoveLegal(stepwisePath, i);
+
+            if (isMovePossible && isMoveLegal) {
+                squares[i] = squares[previous];
+                squares[previous] = null;
+
+                let player = this.state.player === 1 ? 2 : 1;
+                this.setState({
+                    sourceSelection: -1,
+                    squares: squares,
+                    player: player
+                });
             } else {
-                if (previous % 2 === 0) {
-                    squares[previous].style = {...this.state.squares[previous].style, backgroundColor: "#6F73D2"};
-                } else {
-                    squares[previous].style = {...this.state.squares[previous].style, backgroundColor: "#9CAAF8"};
-                }
+                this.setState({
+                    sourceSelection: -1,
+                    squares: squares
+                });
             }
-
-            this.setState({squares: squares, sourceSelection: -1});
-
-            const isMovePossible = squares[previous].isMovePossible(previous, i);
-
         }
     }
 

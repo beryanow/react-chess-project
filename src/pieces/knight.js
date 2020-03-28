@@ -16,8 +16,8 @@ export default class Knight extends Piece {
             (previous + 17 === forward));
     }
 
-    getStepwisePath(previous, forward) {
-        return [forward];
+    getStepwisePath() {
+        return [];
     }
 
 }

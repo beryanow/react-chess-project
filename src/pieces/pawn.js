@@ -31,17 +31,10 @@ export default class Pawn extends Piece {
 
         if (forward === previous - 16) {
             stepwisePath.push(previous - 8);
-            stepwisePath.push(previous - 16)
         } else if (forward === previous + 16) {
             stepwisePath.push(previous + 8);
-            stepwisePath.push(previous + 16);
-        } else {
-            if (this.player === 1) {
-                stepwisePath.push(previous - 8);
-            } else if (this.player === 2) {
-                stepwisePath.push(previous + 8);
-            }
         }
+
         return stepwisePath;
     }
 }
