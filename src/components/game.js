@@ -22,24 +22,28 @@ export default class Game extends React.Component {
 
                 this.setState({squares: squares, sourceSelection: i});
             }
-        } else if (this.state.squares[i].style.backgroundColor === "#3F4077") {
+        } else {
             const squares = this.state.squares.slice();
+            const previous = this.state.sourceSelection;
 
-            if (parseInt(i / 8) % 2 === 0) {
-                if (i % 2 === 0) {
-                    squares[i].style = {...this.state.squares[i].style, backgroundColor: "#9CAAF8"};
+            if (parseInt(previous / 8) % 2 === 0) {
+                if (previous % 2 === 0) {
+                    squares[previous].style = {...this.state.squares[previous].style, backgroundColor: "#9CAAF8"};
                 } else {
-                    squares[i].style = {...this.state.squares[i].style, backgroundColor: "#6F73D2"};
+                    squares[previous].style = {...this.state.squares[previous].style, backgroundColor: "#6F73D2"};
                 }
             } else {
-                if (i % 2 === 0) {
-                    squares[i].style = {...this.state.squares[i].style, backgroundColor: "#6F73D2"};
+                if (previous % 2 === 0) {
+                    squares[previous].style = {...this.state.squares[previous].style, backgroundColor: "#6F73D2"};
                 } else {
-                    squares[i].style = {...this.state.squares[i].style, backgroundColor: "#9CAAF8"};
+                    squares[previous].style = {...this.state.squares[previous].style, backgroundColor: "#9CAAF8"};
                 }
             }
 
             this.setState({squares: squares, sourceSelection: -1});
+
+            const isMovePossible = squares[previous].isMovePossible(previous, i);
+
         }
     }
 
