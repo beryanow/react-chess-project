@@ -36,7 +36,7 @@ export default class Queen extends Piece {
             start += 1;
         }
 
-        for (let i = start; i < end; i += increment) {
+        for (let i = start; i <= end; i += increment) {
             stepwisePath.push(i);
         }
 
