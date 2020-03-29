@@ -10,6 +10,11 @@ export default class Rook extends Piece {
             ((forward >= (previous - previous % 8)) && (forward <= previous + (7 - previous % 8))); // horizontal line check
     }
 
+    isCheck(current, king) {
+        return (Math.abs(current - king) % 8 === 0) ||  // vertical line check
+            ((king >= (current - current % 8)) && (king <= current + (7 - current % 8))); // horizontal line check
+    }
+
     getStepwisePath(previous, forward) {
         let stepwisePath = [];
         let start, end, increment;

@@ -9,6 +9,10 @@ export default class Bishop extends Piece {
         return ((Math.abs(previous - forward) % 9 === 0) || (Math.abs(previous - forward) % 7 === 0));
     }
 
+    isCheck(current, king) {
+        return ((Math.abs(current - king) % 9 === 0) || (Math.abs(current - king) % 7 === 0));
+    }
+
     getStepwisePath(previous, forward) {
         let stepwisePath = [];
         let start, end, increment;

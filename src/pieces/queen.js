@@ -10,6 +10,11 @@ export default class Queen extends Piece {
             ((Math.abs(previous - forward) % 8 === 0) || (forward >= (previous - previous % 8) && (forward <= previous + (7 - previous % 8)))); // like rook
     }
 
+    isCheck(current, king) {
+        return ((Math.abs(current - king) % 9 === 0) || (Math.abs(current - king) % 7 === 0)) || // like bishop
+            ((Math.abs(current - king) % 8 === 0) || (king >= (current - current % 8) && (king <= current + (7 - current % 8)))); // like rook
+    }
+
     getStepwisePath(previous, forward) {
         let stepwisePath = [];
         let start, end, increment;

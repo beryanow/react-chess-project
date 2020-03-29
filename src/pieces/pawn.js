@@ -26,6 +26,19 @@ export default class Pawn extends Piece {
         return false;
     }
 
+    isCheck(current, king) {
+        if (this.player === 1) {
+            if ((king === current - 9) || (king === current - 7)) {
+                return true;
+            }
+        } else if (this.player === 2) {
+            if ((king === current + 9) || (king === current + 7)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     getStepwisePath(previous, forward) {
         let stepwisePath = [];
 

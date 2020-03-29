@@ -16,6 +16,17 @@ export default class Knight extends Piece {
             (previous + 17 === forward));
     }
 
+    isCheck(current, king) {
+        return ((current - 17 === king) ||
+            (current - 10 === king) ||
+            (current - 6 === king) ||
+            (current - 15 === king) ||
+            (current + 15 === king) ||
+            (current + 6 === king) ||
+            (current + 10 === king) ||
+            (current + 17 === king));
+    }
+
     getStepwisePath() {
         return [];
     }
