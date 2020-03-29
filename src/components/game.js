@@ -3,6 +3,7 @@ import React from 'react';
 import '../index.css';
 import Board from './board.js';
 import initializeBoard from "./board_structure_creator";
+import King from "../pieces/king";
 
 export default class Game extends React.Component {
     constructor() {
@@ -12,9 +13,9 @@ export default class Game extends React.Component {
             sourceSelection: -1,
             whiteKing: 60,
             blackKing: 4,
-            whiteCheck: -1,
-            blackCheck: -1,
             player: 1,
+            borders: [0, 1, 2, 3, 4, 5, 6, 7, 56, 57, 58, 59, 60, 61, 62, 63,
+                15, 23, 31, 39, 47, 55, 8, 16, 24, 32, 40, 48]
         }
     }
 
@@ -33,21 +34,17 @@ export default class Game extends React.Component {
         return isLegal;
     }
 
-    isPathEmpty(srcToDestPath) {
+    isPathEmpty(src, squares) {
         let isLegal = true;
-        for (let i = 0; i < srcToDestPath.length; i++) {
-            if (this.state.squares[srcToDestPath[i]] !== null) {
-                isLegal = false;
-            }
-        }
-
-        return isLegal;
-    }
-
-    isNewPathEmpty(src, phantom) {
-        let isLegal = true;
+        let flag = -1;
         for (let i = 0; i < src.length; i++) {
-            if ((this.state.squares[src[i]] !== null) && (src[i] !== phantom)) {
+            if (this.state.borders.indexOf(src[i]) !== -1) {
+                if (flag === 1) {
+                    return false;
+                }
+                flag = 1;
+            }
+            if (squares[src[i]] !== null) {
                 isLegal = false;
             }
         }
@@ -55,26 +52,29 @@ export default class Game extends React.Component {
         return isLegal;
     }
 
-    isCheckOpen(phantom) {
-        if (this.state.player === 1) {
-            for (let i = 0; i < this.state.blackThreat.length; i++) {
-                const stepWisePathToKing = this.state.squares[this.state.blackThreat[i]].getStepwisePath(this.state.blackThreat[i], this.state.whiteKing);
+    isCheck(squares, king) {
+        let threats = [];
 
-                if (!this.isNewPathEmpty(stepWisePathToKing, phantom)) {
-                    return true;
-                }
-            }
-        } else if (this.state.player === 2) {
-            for (let i = 0; i < this.state.whiteThreat.length; i++) {
-                const stepWisePathToKing = this.state.squares[this.state.whiteThreat[i]].getStepwisePath(this.state.whiteThreat[i], this.state.blackKing);
-
-                if (!this.isNewPathEmpty(stepWisePathToKing, phantom)) {
-                    return true;
+        for (let i = 0; i < 64; i++) {
+            if (squares[i] !== null) {
+                if (this.state.player !== squares[i].player) {
+                    if (squares[i].isCheck(i, king)) {
+                        threats.push(i);
+                    }
                 }
             }
         }
 
-        return false;
+        let editThreats = threats.slice();
+
+        for (let i = 0; i < threats.length; i++) {
+            const stepWisePathToKing = squares[threats[i]].getStepwisePath(threats[i], king);
+            if (!this.isPathEmpty(stepWisePathToKing, squares)) {
+                editThreats.splice(editThreats.indexOf(threats[i]), 1);
+            }
+        }
+
+        return editThreats.length > 0;
     }
 
     handleClick(i) {
@@ -86,7 +86,7 @@ export default class Game extends React.Component {
                 this.setState({squares: squares, sourceSelection: i});
             }
         } else {
-            const squares = this.state.squares.slice();
+            let squares = this.state.squares.slice();
             const previous = this.state.sourceSelection;
 
             squares[previous].style = {...this.state.squares[previous].style, backgroundColor: null};
@@ -99,60 +99,49 @@ export default class Game extends React.Component {
             const isMoveLegal = this.isMoveLegal(stepwisePath, i);
 
             if (isMovePossible && isMoveLegal) {
+                const checkSquares = squares.slice();
+
+                let king;
                 if (this.state.player === 1) {
-                    if (this.state.whiteCheck > -1) {
-                        const stepWisePathToKing = squares[this.state.whiteCheck].getStepwisePath(this.state.whiteCheck, this.state.whiteKing);
-                        if ((stepWisePathToKing.indexOf(i) !== -1) || (this.state.whiteCheck === i)) {
-                            this.setState({whiteCheck: -1});
-                        } else {
-                            this.setState({sourceSelection: -1});
-                            return;
-                        }
-                    }
+                    king = this.state.whiteKing;
                 } else if (this.state.player === 2) {
-                    if (this.state.blackCheck > -1) {
-                        const stepWisePathToKing = squares[this.state.blackCheck].getStepwisePath(this.state.blackCheck, this.state.blackKing);
-                        if ((stepWisePathToKing.indexOf(i) !== -1) || (this.state.blackCheck === i)) {
-                            this.setState({blackCheck: -1});
-                        } else {
-                            this.setState({sourceSelection: -1});
-                            return;
-                        }
-                    }
+                    king = this.state.blackKing;
                 }
 
-                squares[i] = squares[previous];
-                squares[previous] = null;
-
-                if (this.state.player === 1) {
-                    const stepWisePathToKing = squares[i].getStepwisePath(i, this.state.blackKing);
-
-                    if (squares[i].isCheck(i, this.state.blackKing) && this.isPathEmpty(stepWisePathToKing)) {
-                        this.setState({blackCheck: i});
-                    } else {
-                        this.setState({blackCheck: -1});
+                checkSquares[i] = checkSquares[previous];
+                checkSquares[previous] = null;
+                let tempKing = -1;
+                if (checkSquares[i] instanceof King) {
+                    if (this.state.player === 1) {
+                        tempKing = this.state.whiteKing;
+                        this.setState({whiteKing: i});
+                    } else if (this.state.player === 2) {
+                        tempKing = this.state.blackKing;
+                        this.setState({blackKing: i});
                     }
-                } else if (this.state.player === 2) {
-                    const stepWisePathToKing = squares[i].getStepwisePath(i, this.state.whiteKing);
 
-                    if (squares[i].isCheck(i, this.state.whiteKing) && this.isPathEmpty(stepWisePathToKing)) {
-                        this.setState({whiteCheck: i});
-                    } else {
-                        this.setState({whiteCheck: -1});
+                    king = i;
+                }
+
+                if (!this.isCheck(checkSquares, king)) {
+                    squares = checkSquares;
+                } else {
+                    this.setState({sourceSelection: -1, squares: squares});
+                    if (tempKing !== -1) {
+                        if (this.state.player === 1) {
+                            this.setState({whiteKing: tempKing});
+                        } else if (this.state.player === 2) {
+                            this.setState({blackKing: tempKing});
+                        }
                     }
+                    return;
                 }
 
                 let player = this.state.player === 1 ? 2 : 1;
-                this.setState({
-                    sourceSelection: -1,
-                    squares: squares,
-                    player: player
-                });
+
+                this.setState({sourceSelection: -1, squares: squares, player: player});
             } else {
-                this.setState({
-                    sourceSelection: -1,
-                    squares: squares
-                });
+                this.setState({sourceSelection: -1, squares: squares});
             }
         }
     }
