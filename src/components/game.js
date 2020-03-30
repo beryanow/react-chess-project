@@ -101,7 +101,6 @@ export default class Game extends React.Component {
                             const stepwisePathToThreat = squares[i].getStepwisePath(i, threats[m]);
                             if (this.isPathEmpty(stepwisePathToThreat, squares)) {
                                 candidates.push([i, threats[m]]);
-                                // continue;
                             }
                         }
 
@@ -114,7 +113,6 @@ export default class Game extends React.Component {
                                 candidates.push([i, possibleMoves[b][last]]);
                             }
                         }
-
                     }
                 }
             }
@@ -151,16 +149,29 @@ export default class Game extends React.Component {
             }
         }
 
-        if (editCandidates.length === 0) {
-            alert("CHECKMATE")
-        } else {
-            alert(editCandidates)
-        }
-
+        return editCandidates.length === 0;
     }
 
     handleClick(i) {
         if (this.state.sourceSelection === -1) {
+            const squares = this.state.squares.slice();
+
+            let king;
+            if (this.state.player === 1) {
+                king = this.state.whiteKing;
+            } else if (this.state.player === 2) {
+                king = this.state.blackKing;
+            }
+
+            const threats = this.isCheck(squares, king);
+
+            if (threats.length > 0) {
+                if (this.isCheckMate(squares, threats, king)) {
+                    alert("CHECKMATE")
+                    return;
+                }
+            }
+
             if (this.state.squares[i] && (this.state.squares[i].player === this.state.player)) {
                 const squares = this.state.squares.slice();
                 squares[i].style = {...this.state.squares[i].style, backgroundColor: "#3F4077"};
@@ -209,7 +220,6 @@ export default class Game extends React.Component {
                 if (!threats.length > 0) {
                     squares = checkSquares;
                 } else {
-                    this.isCheckMate(squares, threats, king);
 
                     this.setState({sourceSelection: -1, squares: squares});
                     if (tempKing !== -1) {

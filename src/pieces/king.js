@@ -14,7 +14,7 @@ export default class King extends Piece {
                 paths.push([current - values[i]]);
             }
 
-            if (stepwisePathToKing.indexOf(current + values[i]) === -1 && !squares[current + values[i]])  {
+            if (stepwisePathToKing.indexOf(current + values[i]) === -1 && !squares[current + values[i]] && (current + values[i] <= 63))  {
                 paths.push([current + values[i]]);
             }
         }

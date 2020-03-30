@@ -67,7 +67,6 @@ export default class Pawn extends Piece {
     getStepwisePathCheckmate(previous, forward) {
         let stepwisePath = [];
 
-        alert("here +" + forward + " " + previous)
         if (forward === previous - 16) {
             stepwisePath.push(previous - 16);
         } else if (forward === previous + 16) {
