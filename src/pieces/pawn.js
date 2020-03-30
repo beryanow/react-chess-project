@@ -26,6 +26,19 @@ export default class Pawn extends Piece {
         return false;
     }
 
+    getPossibleMoves(stepwisePathToKing, current, squares) {
+        let paths = [];
+
+        for (let i = 0; i < stepwisePathToKing.length; i++) {
+            const beat = !!squares[stepwisePathToKing[i]];
+            if (this.isMovePossible(current, stepwisePathToKing[i], beat)) {
+                paths.push(this.getStepwisePathCheckmate(current, stepwisePathToKing[i]));
+            }
+        }
+
+        return paths;
+    }
+
     isCheck(current, king) {
         if (this.player === 1) {
             if ((king === current - 9) || (king === current - 7)) {
@@ -45,6 +58,23 @@ export default class Pawn extends Piece {
         if (forward === previous - 16) {
             stepwisePath.push(previous - 8);
         } else if (forward === previous + 16) {
+            stepwisePath.push(previous + 8);
+        }
+
+        return stepwisePath;
+    }
+
+    getStepwisePathCheckmate(previous, forward) {
+        let stepwisePath = [];
+
+        alert("here +" + forward + " " + previous)
+        if (forward === previous - 16) {
+            stepwisePath.push(previous - 16);
+        } else if (forward === previous + 16) {
+            stepwisePath.push(previous + 16);
+        } else if (forward === previous - 8) {
+            stepwisePath.push(previous - 8);
+        } else if (forward === previous + 8) {
             stepwisePath.push(previous + 8);
         }
 

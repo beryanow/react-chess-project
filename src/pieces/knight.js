@@ -5,6 +5,7 @@ export default class Knight extends Piece {
         super(player, (player === 1 ? "/piece_images/knight_white.png" : "/piece_images/knight_black.png"));
     }
 
+
     isMovePossible(previous, forward) {
         return ((previous - 17 === forward) ||
             (previous - 10 === forward) ||
@@ -25,6 +26,18 @@ export default class Knight extends Piece {
             (current + 6 === king) ||
             (current + 10 === king) ||
             (current + 17 === king));
+    }
+
+    getPossibleMoves(stepwisePathToKing, current) {
+        let paths = [];
+
+        for (let i = 0; i < stepwisePathToKing.length; i++) {
+            if (this.isMovePossible(stepwisePathToKing[i], current)) {
+                paths.push([stepwisePathToKing[i]]);
+            }
+        }
+
+        return paths;
     }
 
     getStepwisePath() {

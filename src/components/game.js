@@ -37,6 +37,7 @@ export default class Game extends React.Component {
     isPathEmpty(src, squares) {
         let isLegal = true;
         let flag = -1;
+
         for (let i = 0; i < src.length; i++) {
             if (this.state.borders.indexOf(src[i]) !== -1) {
                 if (flag === 1) {
@@ -74,7 +75,88 @@ export default class Game extends React.Component {
             }
         }
 
-        return editThreats.length > 0;
+        return editThreats;
+    }
+
+    isCheckMate(squares, threats, king) {
+        let candidates = [];
+
+        for (let i = 0; i < 64; i++) {
+            if (squares[i] !== null) {
+                if (this.state.player === squares[i].player) {
+                    for (let m = 0; m < threats.length; m++) {
+                        if (squares[i] instanceof King) {
+                            const stepwisePathToKing = squares[threats[m]].getStepwisePath(threats[m], king);
+
+                            const possibleMoves = squares[i].getPossibleMoves(stepwisePathToKing, i, squares);
+                            for (let b = 0; b < possibleMoves.length; b++) {
+                                if (possibleMoves[b].length !== 0) {
+                                    candidates.push([i, possibleMoves[b][0]]);
+                                }
+                            }
+                            continue;
+                        }
+
+                        if (squares[i].isCheck(i, threats[m])) {
+                            const stepwisePathToThreat = squares[i].getStepwisePath(i, threats[m]);
+                            if (this.isPathEmpty(stepwisePathToThreat, squares)) {
+                                candidates.push([i, threats[m]]);
+                                // continue;
+                            }
+                        }
+
+                        const stepwisePathToKing = squares[threats[m]].getStepwisePath(threats[m], king);
+
+                        const possibleMoves = squares[i].getPossibleMoves(stepwisePathToKing, i, squares);
+                        for (let b = 0; b < possibleMoves.length; b++) {
+                            if (this.isPathEmpty(possibleMoves[b], squares) && possibleMoves[b].length !== 0) {
+                                let last = possibleMoves[b].length - 1;
+                                candidates.push([i, possibleMoves[b][last]]);
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
+
+        const editCandidates = candidates.slice();
+
+        for (let i = 0; i < candidates.length; i++) {
+            if (squares[candidates[i][0]] instanceof King) {
+                const previous = candidates[i][0];
+                const forward = candidates[i][1];
+
+                const newSquares = squares.slice();
+                newSquares[forward] = newSquares[previous];
+                newSquares[previous] = null;
+
+                const newThreats = this.isCheck(newSquares, forward);
+                if (newThreats.length > 0) {
+                    editCandidates.splice(editCandidates.indexOf(i), 1);
+                }
+                continue;
+            }
+
+            const previous = candidates[i][0];
+            const forward = candidates[i][1];
+
+            const newSquares = squares.slice();
+            newSquares[forward] = newSquares[previous];
+            newSquares[previous] = null;
+
+            const newThreats = this.isCheck(newSquares, king);
+            if (newThreats.length > 0) {
+                editCandidates.splice(editCandidates.indexOf(i), 1);
+            }
+        }
+
+        if (editCandidates.length === 0) {
+            alert("CHECKMATE")
+        } else {
+            alert(editCandidates)
+        }
+
     }
 
     handleClick(i) {
@@ -123,9 +205,12 @@ export default class Game extends React.Component {
                     king = i;
                 }
 
-                if (!this.isCheck(checkSquares, king)) {
+                const threats = this.isCheck(checkSquares, king);
+                if (!threats.length > 0) {
                     squares = checkSquares;
                 } else {
+                    this.isCheckMate(squares, threats, king);
+
                     this.setState({sourceSelection: -1, squares: squares});
                     if (tempKing !== -1) {
                         if (this.state.player === 1) {

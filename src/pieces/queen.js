@@ -15,6 +15,18 @@ export default class Queen extends Piece {
             ((Math.abs(current - king) % 8 === 0) || (king >= (current - current % 8) && (king <= current + (7 - current % 8)))); // like rook
     }
 
+    getPossibleMoves(stepwisePathToKing, current) {
+        let paths = [];
+
+        for (let i = 0; i < stepwisePathToKing.length; i++) {
+            if (this.isMovePossible(stepwisePathToKing[i], current)) {
+                paths.push(this.getStepwisePathCheckmate(stepwisePathToKing[i], current));
+            }
+        }
+
+        return paths;
+    }
+
     getStepwisePath(previous, forward) {
         let stepwisePath = [];
         let start, end, increment;
@@ -44,6 +56,41 @@ export default class Queen extends Piece {
         }
 
         for (let i = start; i < end; i += increment) {
+            stepwisePath.push(i);
+        }
+
+        return stepwisePath;
+    }
+
+    getStepwisePathCheckmate(previous, forward) {
+        let stepwisePath = [];
+        let start, end, increment;
+
+        if (previous > forward) {
+            start = forward;
+            end = previous;
+        } else {
+            start = previous;
+            end = forward;
+        }
+
+        if (Math.abs(previous - forward) % 8 === 0) {
+            increment = 8;
+            start += 8;
+        } else if (Math.abs(previous - forward) % 9 === 0) {
+            // left diagonal
+            increment = 9;
+            start += 9;
+        } else if (Math.abs(previous - forward) % 7 === 0) {
+            // right diagonal
+            increment = 7;
+            start += 7;
+        } else {
+            increment = 1;
+            start += 1;
+        }
+
+        for (let i = start; i <= end; i += increment) {
             stepwisePath.push(i);
         }
 
