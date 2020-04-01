@@ -1,5 +1,5 @@
 # React Chess Game
 
 Screenshots:
-![Image alt](images/Screenshot 1.png)
-![Image alt](images/Screenshot 2.png)
+![Image alt](https://github.com/beryanow/react-chess-project/blob/master/images/Screenshot%201.png)
+![Image alt](https://github.com/beryanow/react-chess-project/blob/master/images/Screenshot%202.png)
